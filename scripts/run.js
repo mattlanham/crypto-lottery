@@ -42,6 +42,15 @@ const main = async () => {
     let prizePool = await contract.getPrizePool();
     console.log("Total prize pool:", hre.ethers.utils.formatEther(prizePool));
 
+    // Get contract balance
+    contractBalance = await hre.ethers.provider.getBalance(
+        contract.address
+    );
+    console.log(
+        'Contract balance: ',
+        hre.ethers.utils.formatEther(contractBalance)
+    );
+
     // Perform a prize draw
     let prizeDraw = await contract.startDraw();
     await prizeDraw.wait();
@@ -54,6 +63,14 @@ const main = async () => {
     let winners = await contract.getWinners();
     console.log("Here are the winners:", winners);
 
+    // Get contract balance
+    contractBalance = await hre.ethers.provider.getBalance(
+        contract.address
+    );
+    console.log(
+        'Contract balance: ',
+        hre.ethers.utils.formatEther(contractBalance)
+    );
 
 
 };

@@ -26,10 +26,13 @@ contract CryptoLottery is Ownable {
         uint256 winnings;
     }
 
+    // Store an array of winners
     Winner[] winners;
 
     // Events
     event TicketPurchased(address indexed from, uint256 timestamp);
+    event DrawStarted(uint256 timestamp);
+    event WinnerChosen(address indexed player, uint256 timestamp);
 
     constructor() payable {
         console.log("Contract method constructor called");
@@ -46,6 +49,10 @@ contract CryptoLottery is Ownable {
 
         // Add the ticket purchase
         tickets.push(msg.sender);
+
+        // Emit event
+        emit TicketPurchased(msg.sender, block.timestamp);
+
     }
 
     // Get all the tickets that have been purchased
@@ -70,19 +77,29 @@ contract CryptoLottery is Ownable {
 
     // Start the prize draw
     function startDraw() public onlyOwner {
+        
+        // Emit event
+        emit DrawStarted(block.timestamp);
+
+        // Get a random winner
         uint index = random() % tickets.length;
         console.log("Draw finished, player won: ", tickets[index]);
 
-        payWinner(payable(tickets[index]));
+        // Pay the winner
+        payWinner(payable(tickets[index]), getPrizePool());
     }
 
     // This is the function that will pay out to the winner
-    function payWinner(address payable player) public payable onlyOwner {
+    function payWinner(address payable player, uint256 prizeAmount) public payable onlyOwner {
+        
+        // Emit event
+        emit WinnerChosen(player, block.timestamp);
+
         // Transfer the player their winnings
-        // player.transfer(address(this).balance);
+        player.transfer(prizeAmount);
 
         // Save a record of the winner
-        winners.push(Winner(msg.sender, block.timestamp, 0.001 ether));
+        winners.push(Winner(msg.sender, block.timestamp, prizeAmount));
 
         // Reset the draw
         resetTickets();
