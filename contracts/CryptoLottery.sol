@@ -8,7 +8,7 @@ import "hardhat/console.sol";
 contract CryptoLottery is Ownable {
 
     // The initial ticket price
-    uint256 ticketPrice = 0.0001 ether;
+    uint256 ticketPrice = 0.01 ether;
 
     // Set the values for the payout (in %)
     uint256 firstPrizePayout = 50;
@@ -86,7 +86,7 @@ contract CryptoLottery is Ownable {
         console.log("Draw finished, player won: ", tickets[index]);
 
         // Pay the winner
-        payWinner(payable(tickets[index]), getPrizePool());
+        payWinner(payable(tickets[index]), calculateWinnings(1));
     }
 
     // This is the function that will pay out to the winner
@@ -105,8 +105,25 @@ contract CryptoLottery is Ownable {
         resetTickets();
     }
 
+    // Once the draw has been done, reset the array of tickets
     function resetTickets() public onlyOwner {
         tickets = new address[](0);
+    }
+
+    // This will return the prize pool (80% of the contract balance)
+    function calculateWinnings(uint16 _position) public view returns(uint256) {
+        uint256 prizePortion;
+
+        if (_position == 1) {
+            prizePortion = firstPrizePayout;
+        } else if (_position == 2) {
+            prizePortion = secondPrizePayout;
+        } else if (_position == 3) {
+            prizePortion = thirdPrizePayout;
+        }
+
+        // Calculate the portal of the total prize pool i.e. for first 50% of 80%
+        return getPrizePool() * prizePortion;
     }
 
     // This will return the prize pool (80% of the contract balance)

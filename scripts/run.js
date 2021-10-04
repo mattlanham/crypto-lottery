@@ -24,13 +24,13 @@ const main = async () => {
 
     // Purchase a ticket
     let purchaseTicket = await contract.purchaseTicket({
-        value: hre.ethers.utils.parseEther('0.0001')
+        value: hre.ethers.utils.parseEther('0.01')
     });
     await purchaseTicket.wait();
 
     // Purchase a ticket
     purchaseTicket = await contract.purchaseTicket({
-        value: hre.ethers.utils.parseEther('0.0001')
+        value: hre.ethers.utils.parseEther('0.01')
     });
     await purchaseTicket.wait();
 
