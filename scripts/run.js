@@ -12,27 +12,50 @@ const main = async () => {
     let contractBalance = await hre.ethers.provider.getBalance(
         contract.address
     );
+
     console.log(
         'Contract balance: ',
         hre.ethers.utils.formatEther(contractBalance)
     );
 
-    // Send Wave
-    let waveTxn = await contract.wave('This is wave #1');
-    await waveTxn.wait(); // Wait for it to be mined
+    // Get ticket price
+    let ticketPrice = await contract.getTicketPrice();
+    console.log("The ticket price is: ", hre.ethers.utils.formatEther(ticketPrice));
 
-    waveTxn = await contract.wave('This is wave #2');
-    await waveTxn.wait(); // Wait for it to be mined
+    // Purchase a ticket
+    let purchaseTicket = await contract.purchaseTicket({
+        value: hre.ethers.utils.parseEther('0.0001')
+    });
+    await purchaseTicket.wait();
+
+    // Purchase a ticket
+    purchaseTicket = await contract.purchaseTicket({
+        value: hre.ethers.utils.parseEther('0.0001')
+    });
+    await purchaseTicket.wait();
+
+    // Get tickets
+    let tickets = await contract.getTickets();
+    console.log("Here are the tickets:", tickets);
 
     // Get contract balance
-    contractBalance = await hre.ethers.provider.getBalance(contract.address);
-    console.log(
-        'Contract balance: ',
-        hre.ethers.utils.formatEther(contractBalance)
-    );
+    let prizePool = await contract.getPrizePool();
+    console.log("Total prize pool:", hre.ethers.utils.formatEther(prizePool));
 
-    let allWaves = await contract.getAllWaves();
-    console.log(allWaves);
+    // Perform a prize draw
+    let prizeDraw = await contract.startDraw();
+    await prizeDraw.wait();
+
+    // Get tickets
+    tickets = await contract.getTickets();
+    console.log("Here are the tickets:", tickets);
+
+    // Get winners
+    let winners = await contract.getWinners();
+    console.log("Here are the winners:", winners);
+
+
+
 };
 
 const runMain = async () => {
