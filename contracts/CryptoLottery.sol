@@ -9,6 +9,7 @@ contract CryptoLottery is Ownable {
 
     // The initial ticket price
     uint256 ticketPrice = 0.01 ether;
+    uint256 minimumTickets = 10;
 
     // Set the values for the payout (in %)
     uint256 firstPrizePayout = 50;
@@ -77,6 +78,11 @@ contract CryptoLottery is Ownable {
 
     // Start the prize draw
     function startDraw() public onlyOwner {
+
+        require(
+            tickets.length >= minimumTickets,
+            "There needs to be at least 10 players to run a draw"
+        );
         
         // Emit event
         emit DrawStarted(block.timestamp);
