@@ -83,6 +83,11 @@ contract CryptoLottery is Ownable {
             tickets.length >= minimumTickets,
             "There needs to be at least 10 players to run a draw"
         );
+
+        require(
+            address(this).balance > 0,
+            "A draw cannot be run when the contract balance is 0"
+        );
         
         // Emit event
         emit DrawStarted(block.timestamp);
@@ -96,11 +101,16 @@ contract CryptoLottery is Ownable {
     }
 
     // This is the function that will pay out to the winner
-    function payWinner(address payable player, uint256 prizeAmount) public payable onlyOwner {
-        
+    function payWinner(address payable player, uint prizeAmount) public payable onlyOwner {
+
+        require(
+            prizeAmount < address(this).balance,
+            "Winner cannot win more than the contract balance"
+        );
+
         // Emit event
         emit WinnerChosen(player, block.timestamp);
-
+        
         // Transfer the player their winnings
         player.transfer(prizeAmount);
 
@@ -128,8 +138,8 @@ contract CryptoLottery is Ownable {
             prizePortion = thirdPrizePayout;
         }
 
-        // Calculate the portal of the total prize pool i.e. for first 50% of 80%
-        return getPrizePool() * prizePortion;
+        // Calculate the portal of the total prize pool i.e. for first 50% of prize pool (80% of contract balance)
+        return (getPrizePool() / 100) * prizePortion;
     }
 
     // This will return the prize pool (80% of the contract balance)
