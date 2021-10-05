@@ -111,8 +111,11 @@ describe("CryptoLottery", function () {
     ).to.be.revertedWith('Ownable: caller is not the owner');
   });
 
-  it("Should not be able to run prize draw with zero tickets", async function () {
-    await this.lottery.startDraw()
+  it("Should have zero tickets after a prize draw", async function () {
+    await this.lottery.startDraw();
+
+    expect(await this.lottery.getTickets()).lengthOf(0);
   });
+
 
 });

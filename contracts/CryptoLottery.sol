@@ -128,6 +128,12 @@ contract CryptoLottery is Ownable {
 
     // This will return the prize pool (80% of the contract balance)
     function calculateWinnings(uint16 _position) public view returns(uint256) {
+
+        require(
+            _position >= 1 && _position <= 3,
+            "Winning positions must be within a 1-3 range"
+        );
+
         uint256 prizePortion;
 
         if (_position == 1) {
@@ -136,6 +142,8 @@ contract CryptoLottery is Ownable {
             prizePortion = secondPrizePayout;
         } else if (_position == 3) {
             prizePortion = thirdPrizePayout;
+        } else {
+            return 0;
         }
 
         // Calculate the portal of the total prize pool i.e. for first 50% of prize pool (80% of contract balance)
