@@ -325,9 +325,9 @@ export default function App() {
                             {!purchasing ? "Purchase a ticket" : 
                             (
                                 <>
-                                <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-yellow-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-yellow-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                                 </svg>
                                 Awaiting confirmation
                                 </>
@@ -338,15 +338,15 @@ export default function App() {
                         <p className="mt-5 text-gray-500">Current ticket price is: {ethers.utils.formatEther(ticketPrice)} ETH</p>
                         
                         {currentTickets > 0 && (
-                            <div class="rounded-md bg-green-50 p-4 max-w-sm mx-auto mt-5">
-                                <div class="flex">
-                                    <div class="flex-shrink-0">
-                                        <svg class="h-5 w-5 text-green-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                            <div className="rounded-md bg-green-50 p-4 max-w-sm mx-auto mt-5">
+                                <div className="flex">
+                                    <div className="flex-shrink-0">
+                                        <svg className="h-5 w-5 text-green-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                                            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                                         </svg>
                                     </div>
-                                    <div class="ml-3">
-                                        <p class="text-sm font-medium text-green-800">
+                                    <div className="ml-3">
+                                        <p className="text-sm font-medium text-green-800">
                                             You've purchased {currentTickets} tickets for the next draw!
                                         </p>
                                     </div>
@@ -466,9 +466,8 @@ export default function App() {
                 </>
             )}
 
-            
-
-            <p className="text-gray-500 mt-10 mb-10">Built by <a href="https://twitter.com/mattlanham" className="text-indigo-800" target="_blank" rel="noreferrer">@mattlanham</a> // View the sourcecode on <a href="https://github.com/mattlanham/crypto-lottery" target="_blank" rel="noreferrer" className="text-indigo-800"> Github</a></p>
+    
+            <p className="text-gray-500 mt-10 mb-10">Built by <a href="https://twitter.com/mattlanham" className="text-indigo-800" target="_blank" rel="noreferrer">@mattlanham</a>  <span className="pl-5 pr-5">|</span>  View the sourcecode on <a href="https://github.com/mattlanham/crypto-lottery" target="_blank" rel="noreferrer" className="text-indigo-800"> Github</a></p>
             
         </div>
     );
