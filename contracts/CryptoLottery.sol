@@ -160,6 +160,7 @@ contract CryptoLottery is Ownable {
     }
 
     // Function that creates random
+    // Needs updated to Chainlink VRF, as this is not fool proof
     function random() private view returns (uint) {
         return uint(keccak256(abi.encodePacked(block.difficulty, block.timestamp)));
     }
