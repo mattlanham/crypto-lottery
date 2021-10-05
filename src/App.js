@@ -75,6 +75,13 @@ export default function App() {
     const contractAddress = "0x98a071dc643208c5AF3BF6727E879d92562601d6";
     const contractABI = abi.abi;
 
+    const triggerInitialLoad = async () => {
+        getCurrentTicketPrice();
+        getTickets();
+        getWinners();
+        getPrizePool();
+    };
+
     const setupEvents = async () => {
         try {
             const { ethereum } = window;
@@ -125,6 +132,7 @@ export default function App() {
                 const account = accounts[0];
                 console.log("Found an authorized account:", account);
                 setCurrentAccount(account);
+                triggerInitialLoad();
             } else {
                 console.log("No authorized account found");
             }
@@ -147,6 +155,7 @@ export default function App() {
 
             console.log("Connected ", accounts[0]);
             setCurrentAccount(accounts[0]);
+            triggerInitialLoad();
         } catch (error) {
             console.log(error);
         }
@@ -250,6 +259,39 @@ export default function App() {
         }
     };
 
+    const adminFunction = async (action) => {
+        try {
+            const { ethereum } = window;
+            const provider = new ethers.providers.Web3Provider(ethereum);
+            const signer = provider.getSigner();
+            const cryptoLotteryContract = new ethers.Contract(contractAddress, contractABI, signer);
+
+            let actionTxn;
+
+            if (action === 'startDraw') {
+                actionTxn = await cryptoLotteryContract.startDraw();
+                await actionTxn.wait();
+            } else if (action === 'withdrawBalance') {
+                actionTxn = await cryptoLotteryContract.withdrawBalance();
+                await actionTxn.wait();
+            } else if (action === 'resetTickets') {
+                actionTxn = await cryptoLotteryContract.resetTickets();
+                await actionTxn.wait();
+            } else if (action === 'setTicketPrice') {
+                let newPrice = window.prompt("What is the new price?", 0);
+                if (newPrice) {
+                    actionTxn = await cryptoLotteryContract.setTicketPrice(ethers.utils.parseEther(newPrice));
+                    await actionTxn.wait();
+                }
+            }
+
+            triggerInitialLoad();
+
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
     // Will run when the page loads
     useEffect(() => {
         checkIfWalletIsConnected();
@@ -313,8 +355,8 @@ export default function App() {
 
             {!currentAccount && (
                 <>
-                    <button className="shadow text-lg text-blue-900 p-5 pl-10 pr-10 rounded mt-10" onClick={connectWallet}>
-                        Connect your wallet
+                    <button className="hover:bg-gray-100 shadow-lg ring-1 ring-black ring-opacity-10 text-lg text-black p-5 pl-10 pr-10 rounded-lg mt-5" onClick={connectWallet}>
+                        Connect your MetaMask wallet
                     </button>
                     <p className="mt-5 text-white">Once your wallet is connected, you'll see the total entrants, prize pool and previous winners.</p>
                 </>
@@ -363,6 +405,27 @@ export default function App() {
                 <TicketPurchased onClick={
                     setTicketPurchased
                 } />
+            )}
+
+            {currentAccount && currentAccount.toUpperCase() === '0x14f686aF5C1370268C2C77973ea2b37feaa45CCF'.toUpperCase() && (
+                <>
+                    <p className="mt-10">Admin functions:</p>
+                    <button className="hover:bg-gray-100 shadow-lg ring-1 ring-black ring-opacity-10 text-lg text-black p-3 pl-5 pr-5 rounded-lg mt-5" onClick={() => { adminFunction('startDraw') }}>
+                        Start Draw
+                    </button>
+                    
+                    <button  className="hover:bg-gray-100 shadow-lg ring-1 ring-black ring-opacity-10 text-lg text-black p-3 pl-5 pr-5 rounded-lg mt-5 ml-10" onClick={() => { adminFunction('withdrawBalance') }}>
+                        Withdraw contract balance
+                    </button>
+
+                    <button  className="hover:bg-gray-100 shadow-lg ring-1 ring-black ring-opacity-10 text-lg text-black p-3 pl-5 pr-5 rounded-lg mt-5 ml-10" onClick={() => { adminFunction('resetTickets') }}>
+                        Reset tickets
+                    </button>
+
+                    <button  className="hover:bg-gray-100 shadow-lg ring-1 ring-black ring-opacity-10 text-lg text-black p-3 pl-5 pr-5 rounded-lg mt-5 ml-10" onClick={() => { adminFunction('setTicketPrice') }}>
+                        Set ticket price
+                    </button>
+                </>
             )}
 
             
