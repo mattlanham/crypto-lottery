@@ -150,6 +150,12 @@ contract CryptoLottery is Ownable {
         return (address(this).balance / 100) * totalPrizePool;
     }
 
+    // If the contract has to be updated, or transferred allow remaining funds to be withdrawn
+    function withdrawBalance() public payable onlyOwner {
+        payable(msg.sender).transfer(address(this).balance);
+    }
+
+    // Function that creates random
     function random() private view returns (uint) {
         return uint(keccak256(abi.encodePacked(block.difficulty, block.timestamp)));
     }
