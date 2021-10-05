@@ -71,6 +71,7 @@ export default function App() {
     const [prizePool, setPrizePool] = useState(0);
     const [purchasing, setPurchasing] = useState(false);
     const [ticketPurchased, setTicketPurchased] = useState(false);
+    const [currentTickets, setCurrentTickets] = useState(0);
 
     const contractAddress = "0x98a071dc643208c5AF3BF6727E879d92562601d6";
     const contractABI = abi.abi;
@@ -155,7 +156,6 @@ export default function App() {
 
             console.log("Connected ", accounts[0]);
             setCurrentAccount(accounts[0]);
-            triggerInitialLoad();
         } catch (error) {
             console.log(error);
         }
@@ -178,15 +178,30 @@ export default function App() {
     };
 
     const getTickets = async () => {
+        console.log("called getTickets");
+        
         try {
             const { ethereum } = window;
             const provider = new ethers.providers.Web3Provider(ethereum);
             const signer = provider.getSigner();
             const cryptoLotteryContract = new ethers.Contract(contractAddress, contractABI, signer);
+            const walletAddress = await signer.getAddress();
 
             const contractTickets = await cryptoLotteryContract.getTickets();
 
             setTickets(contractTickets);
+
+            let localCurrentTickets = 0;
+
+            // This users tickets
+            contractTickets.forEach(ticket => {
+                if (ticket.toUpperCase() === walletAddress.toUpperCase()) {
+                    localCurrentTickets++;
+                }
+            });
+
+            setCurrentTickets(localCurrentTickets);
+
 
         } catch (error) {
             console.log(error);
@@ -295,10 +310,6 @@ export default function App() {
     // Will run when the page loads
     useEffect(() => {
         checkIfWalletIsConnected();
-        getCurrentTicketPrice();
-        getTickets();
-        getWinners();
-        getPrizePool();
         setupEvents();
     }, []); // eslint-disable-line react-hooks/exhaustive-deps
   
@@ -310,16 +321,43 @@ export default function App() {
                 <p className="mt-3 text-base text-gray-500 sm:text-lg">Enter now for your chance to win!</p>
                 {currentAccount && (
                     <>
-                        <button className="hover:bg-gray-100 shadow-lg ring-1 ring-black ring-opacity-10 text-lg text-black p-5 pl-10 pr-10 rounded-lg mt-5" onClick={purchaseTicket} disabled={purchasing}>
-                            {!purchasing ? "Purchase a ticket" : "Awaiting confirmation"}
+                        <button className="hover:bg-gray-100 inline-flex text-base leading-6 shadow-lg ring-1 ring-black ring-opacity-10 text-lg text-black p-5 pl-10 pr-10 rounded-lg mt-5" onClick={purchaseTicket} disabled={purchasing}>
+                            {!purchasing ? "Purchase a ticket" : 
+                            (
+                                <>
+                                <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-yellow-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                </svg>
+                                Awaiting confirmation
+                                </>
+                            )
+                            }
                         </button>
-                        <p className="mt-5 text-gray-500">Current ticket price is: {ethers.utils.formatEther(ticketPrice)} ETH</p>
 
+                        <p className="mt-5 text-gray-500">Current ticket price is: {ethers.utils.formatEther(ticketPrice)} ETH</p>
+                        
+                        {currentTickets > 0 && (
+                            <div class="rounded-md bg-green-50 p-4 max-w-sm mx-auto mt-5">
+                                <div class="flex">
+                                    <div class="flex-shrink-0">
+                                        <svg class="h-5 w-5 text-green-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                                        </svg>
+                                    </div>
+                                    <div class="ml-3">
+                                        <p class="text-sm font-medium text-green-800">
+                                            You've purchased {currentTickets} tickets for the next draw!
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
                     </>
                 )}
             </div>
             {currentAccount && (
-                <div className="bg-indigo-800 rounded-xl mt-10">
+                <div className="bg-indigo-600 rounded-xl mt-10">
                     <div className="max-w-7xl mx-auto py-12 px-4 sm:py-16 sm:px-6 lg:px-8 lg:py-20">
                         <div className="max-w-4xl mx-auto text-center">
                             <h2 className="text-3xl font-extrabold text-white sm:text-4xl">
