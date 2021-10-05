@@ -139,7 +139,7 @@ export default function App() {
             const { ethereum } = window;
 
             if (!ethereum) {
-                alert("Get metamask");
+                alert("You need to install MetaMask to continue");
                 return;
             }
 
@@ -364,6 +364,10 @@ export default function App() {
                     setTicketPurchased
                 } />
             )}
+
+            
+
+            <p className="text-gray-500 mt-10 mb-10">Built by <a href="https://twitter.com/mattlanham" className="text-indigo-800">@mattlanham</a></p>
             
             
         </div>
