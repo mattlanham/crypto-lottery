@@ -34,6 +34,8 @@ npx hardhat run scripts/deploy.js --network rinkeby
 
 ```
 
+Once the project is deployed, make sure to update the `contractAddress` variable (line 76 ish) in `src/App.js` to the new contract address.
+
 
 The project uses hardhat, so the usual commands also work such as:
 
