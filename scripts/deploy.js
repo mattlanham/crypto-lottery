@@ -1,7 +1,7 @@
 const main = async () => {
     const contractFactory = await hre.ethers.getContractFactory('CryptoLottery');
     const contract = await contractFactory.deploy({
-        value: hre.ethers.utils.parseEther('0.001'),
+        value: hre.ethers.utils.parseEther('0.01'),
     });
 
     await contract.deployed();
