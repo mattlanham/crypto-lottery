@@ -1,9 +1,12 @@
 const { ethers } = require("ethers");
 
 const main = async () => {
+
+    const ticketPrice = '0.1';
+
     const contractFactory = await hre.ethers.getContractFactory("CryptoLottery");
     const contract = await contractFactory.deploy({
-        value: hre.ethers.utils.parseEther('0.1')
+        value: hre.ethers.utils.parseEther(ticketPrice)
     });
     await contract.deployed();
     console.log("Contract deployed to: ", contract.address);
@@ -24,13 +27,13 @@ const main = async () => {
 
     // Purchase a ticket
     let purchaseTicket = await contract.purchaseTicket({
-        value: hre.ethers.utils.parseEther('0.01')
+        value: hre.ethers.utils.parseEther(ticketPrice)
     });
     await purchaseTicket.wait();
 
     // Purchase a ticket
     purchaseTicket = await contract.purchaseTicket({
-        value: hre.ethers.utils.parseEther('0.01')
+        value: hre.ethers.utils.parseEther(ticketPrice)
     });
     await purchaseTicket.wait();
 
