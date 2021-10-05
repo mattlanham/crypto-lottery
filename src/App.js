@@ -68,6 +68,7 @@ export default function App() {
     const [tickets, setTickets] = useState([]);
     const [winners, setWinners] = useState([]);
     const [prizePool, setPrizePool] = useState(0);
+    const [purchasing, setPurchasing] = useState(false);
 
     const contractAddress = "0x05ed1b08eF2CcB5c6Eb867638cFA9FD73a09687e";
     const contractABI = abi.abi;
@@ -84,6 +85,7 @@ export default function App() {
 
                 // Update tickets total
                 getTickets();
+                getPrizePool();
 
             });
 
@@ -92,6 +94,8 @@ export default function App() {
 
                 // Update winners
                 getWinners();
+                getTickets();
+                getPrizePool();
 
             });
 
@@ -156,7 +160,7 @@ export default function App() {
             const contractTicketPrice = await cryptoLotteryContract.getTicketPrice();
 
             setTicketPrice(contractTicketPrice);
-
+            
         } catch (error) {
             console.log(error);
         }
@@ -201,11 +205,15 @@ export default function App() {
             const signer = provider.getSigner();
             const cryptoLotteryContract = new ethers.Contract(contractAddress, contractABI, signer);
 
-            const ticket = cryptoLotteryContract.purchaseTicket({value: ticketPrice});
+            setPurchasing(true);
+            const ticket = await cryptoLotteryContract.purchaseTicket({value: ticketPrice});
             await ticket.wait();
 
-        } catch (error) {
+            setPurchasing(false);
 
+        } catch (error) {
+            console.log(error);
+            setPurchasing(false);
         }
     }
 
@@ -254,62 +262,76 @@ export default function App() {
 
             <h1 className="mt-10 font-sans font-extrabold text-5xl text-white font-raleway">CryptoLottery</h1>
             
-            <div className="ml-44 mr-44">
+            <div className="ml-10 mr-10">
                 <p className="text-white font-sans text-lg pt-5">
-                    This project was built by <a href="" className="text-indigo-200">@mattlanham</a> to learn more about web3 and in particular solidity smart contract programming. CryptoLottery allows people to purchase a ticket using ETH, when there are more than 10 tickets purchased the owner can start the draw. 
+                    This project was built by <a href="https://twitter.com/mattlanham" className="text-indigo-200">@mattlanham</a> to learn more about web3 and in particular solidity smart contract programming. CryptoLottery allows people to purchase a ticket using ETH, when there are more than 10 tickets purchased the owner can start the draw. 
                 </p>
             </div>
 
-            <p className="text-white font-sans text-lg pt-5">The next draw currently has {tickets.length} tickets</p>
-            <p className="text-white font-sans text-lg pt-5">The total prize pool is: {ethers.utils.formatEther(prizePool)} ETH</p>
+            <div className="mt-10">
+                <hr className="border-2" />
+            </div>
+
+            {currentAccount && (
+                <>
+                    <p className="text-white font-sans text-lg pt-5">The next draw currently has {tickets.length} tickets</p>
+                    <p className="text-white font-sans text-lg pt-5">The total prize pool is: {ethers.utils.formatEther(prizePool)} ETH</p>
+                </>
+            )}
+
             {!currentAccount && (
-                <button className="waveButton" onClick={connectWallet}>
-                    Connect wallet
-                </button>
+                <>
+                    <button className="bg-white text-lg text-blue-900 p-5 pl-10 pr-10 rounded mt-10" onClick={connectWallet}>
+                        Connect your wallet
+                    </button>
+                    <p className="mt-5 text-white">Once your wallet is connected, you'll see the total entrants, prize pool and previous winners.</p>
+                </>
             )}
 
             {currentAccount && (
                 <>
-                    <button className="bg-white text-lg text-blue-900 p-5 pl-10 pr-10 rounded mt-10" onClick={purchaseTicket}>
-                        Purchase a ticket
+                    <button className="bg-white text-lg text-blue-900 p-5 pl-10 pr-10 rounded mt-10" onClick={purchaseTicket} disabled={purchasing}>
+                        {!purchasing ? "Purchase a ticket" : "Awaiting confirmation"}
                     </button>
                     <p className="mt-5 text-white">Current ticket price is: {ethers.utils.formatEther(ticketPrice)} ETH</p>
+
+                    <div className="grid grid-cols-2 gap-4">
+
+                        <div className="mt-10">
+                            <p className="text-white text-xl mb-5 font-bold">Entrants</p>
+                            {tickets.length === 0 && (
+                                <p className="mt-5 text-white">There are currently no entrants!</p>
+                            )}
+                            {tickets.map((ticket, index) => {
+                                return (
+                                    <div className="shadow rounded bg-gray-600 p-5 mb-5" key={index}>
+                                        <p className="text-white">{ticket}</p>
+                                    </div>)
+                            })}
+                        </div>
+                        <div className="mt-10">
+                            <p className="text-white text-xl mb-5 font-bold">Previous winners</p>
+                            {winners.length === 0 && (
+                                <p className="mt-5 text-white">There have been no winners</p>
+                            )}
+                            {winners.map((winner, index) => {
+                                return (
+                                    <div className="shadow rounded bg-gray-600 p-5 mb-5" key={index}>
+                                        <p className="text-white">{winner.plaer}</p>
+                                        <p className="text-white">{TimeAgo.inWords(winner.timestamp.toString() * 1000)}</p>
+                                        <p className="text-white">{ethers.utils.formatEther(winner.winnings)} ETH</p>
+                                    </div>)
+                            })}
+                        </div>
+                    </div>
+
+                    <button className="bg-white text-lg text-blue-900 p-5 pl-10 pr-10 rounded mt-10" onClick={startDraw}>
+                        Start Draw
+                    </button>
                 </>
             )}
 
-            <div className="grid grid-cols-2 gap-4">
-
-                <div className="mt-10">
-                    <p className="text-white text-xl mb-5 font-bold">Entrants</p>
-                    {tickets.length === 0 && (
-                        <p className="mt-5 text-white">There are currently no entrants!</p>
-                    )}
-                    {tickets.map((ticket, index) => {
-                        return (
-                            <div className="shadow rounded bg-gray-600 p-5 mb-5" key={index}>
-                                <p class="text-white">{ticket}</p>
-                            </div>)
-                    })}
-                </div>
-                <div className="mt-10">
-                    <p className="text-white text-xl mb-5 font-bold">Previous winners</p>
-                    {winners.length === 0 && (
-                        <p className="mt-5 text-white">There have been no winners</p>
-                    )}
-                    {winners.map((winner, index) => {
-                        return (
-                            <div className="shadow rounded bg-gray-600 p-5 mb-5" key={index}>
-                                <p className="text-white">{winner.plaer}</p>
-                                <p className="text-white">{TimeAgo.inWords(winner.timestamp.toString() * 1000)}</p>
-                                <p className="text-white">{ethers.utils.formatEther(winner.winnings)} ETH</p>
-                            </div>)
-                    })}
-                </div>
-            </div>
-
-            <button className="bg-white text-lg text-blue-900 p-5 pl-10 pr-10 rounded mt-10" onClick={startDraw}>
-                Start Draw
-            </button>
+            
             
         </div>
     );
