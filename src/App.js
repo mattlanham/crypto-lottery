@@ -72,7 +72,7 @@ export default function App() {
     const [purchasing, setPurchasing] = useState(false);
     const [ticketPurchased, setTicketPurchased] = useState(false);
 
-    const contractAddress = "0x05ed1b08eF2CcB5c6Eb867638cFA9FD73a09687e";
+    const contractAddress = "0x98a071dc643208c5AF3BF6727E879d92562601d6";
     const contractABI = abi.abi;
 
     const setupEvents = async () => {

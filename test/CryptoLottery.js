@@ -117,5 +117,18 @@ describe("CryptoLottery", function () {
     expect(await this.lottery.getTickets()).lengthOf(0);
   });
 
+  it("Should allow the owner to withdraw the contract balance", async function () {
+    await expect(
+      this.lottery.connect(addr1).withdrawBalance()
+    ).to.be.revertedWith('Ownable: caller is not the owner');
+
+    await this.lottery.connect(owner).withdrawBalance();
+    
+    expect(
+      ethers.utils.parseEther((await this.lottery.getContractBalance()).value.toString())
+    ).to.equal(0);
+
+  });
+
 
 });

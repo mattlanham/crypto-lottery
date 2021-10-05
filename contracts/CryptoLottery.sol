@@ -89,7 +89,6 @@ contract CryptoLottery is Ownable {
 
         // Get a random winner
         uint index = random() % tickets.length;
-        console.log("Draw finished, player won: ", tickets[index]);
 
         // Pay the winner
         payWinner(payable(tickets[index]), calculateWinnings(1));
@@ -153,6 +152,11 @@ contract CryptoLottery is Ownable {
     // If the contract has to be updated, or transferred allow remaining funds to be withdrawn
     function withdrawBalance() public payable onlyOwner {
         payable(msg.sender).transfer(address(this).balance);
+    }
+
+    // If the contract has to be updated, or transferred allow remaining funds to be withdrawn
+    function getContractBalance() public payable onlyOwner returns(uint256) {
+        return address(this).balance;
     }
 
     // Function that creates random
