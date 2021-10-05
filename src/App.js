@@ -69,7 +69,7 @@ export default function App() {
     const [winners, setWinners] = useState([]);
     const [prizePool, setPrizePool] = useState(0);
 
-    const contractAddress = "0x30D625A0A00C66C24B9E66bcF22Ff2f295201728";
+    const contractAddress = "0x05ed1b08eF2CcB5c6Eb867638cFA9FD73a09687e";
     const contractABI = abi.abi;
 
     const setupEvents = async () => {
@@ -252,8 +252,13 @@ export default function App() {
     return (
         <div className="mainContainer text-center">
 
-            <h1 className="mt-10 font-sans text-4xl text-white">Welcome to CryptoLottery</h1>
-            <p className="text-white font-sans text-lg pt-5">A simple project to learn solidity and web3 by creating a lottery</p>
+            <h1 className="mt-10 font-sans font-extrabold text-5xl text-white font-raleway">CryptoLottery</h1>
+            
+            <div className="ml-44 mr-44">
+                <p className="text-white font-sans text-lg pt-5">
+                    This project was built by <a href="" className="text-indigo-200">@mattlanham</a> to learn more about web3 and in particular solidity smart contract programming. CryptoLottery allows people to purchase a ticket using ETH, when there are more than 10 tickets purchased the owner can start the draw. 
+                </p>
+            </div>
 
             <p className="text-white font-sans text-lg pt-5">The next draw currently has {tickets.length} tickets</p>
             <p className="text-white font-sans text-lg pt-5">The total prize pool is: {ethers.utils.formatEther(prizePool)} ETH</p>
@@ -281,8 +286,8 @@ export default function App() {
                     )}
                     {tickets.map((ticket, index) => {
                         return (
-                            <div key={index}>
-                                <div>{ticket}</div>
+                            <div className="shadow rounded bg-gray-600 p-5 mb-5" key={index}>
+                                <p class="text-white">{ticket}</p>
                             </div>)
                     })}
                 </div>

@@ -10,19 +10,14 @@ contract CryptoLottery is Ownable {
     // The initial ticket price
     uint256 ticketPrice = 0.01 ether;
     uint256 minimumTickets = 10;
-
-    // Set the values for the payout (in %)
-    uint256 firstPrizePayout = 50;
-    uint256 secondPrizePayout = 20;
-    uint256 thirdPrizePayout = 10;
-    uint256 totalPrizePool = 80;
+    uint256 totalPrizePool = 80; // %
 
     // Hold a record of all tickets purchased
     address[] tickets;
 
     // Hold a record of all winners
     struct Winner {
-        address plaer;
+        address player;
         uint256 timestamp;
         uint256 winnings;
     }
@@ -137,11 +132,11 @@ contract CryptoLottery is Ownable {
         uint256 prizePortion;
 
         if (_position == 1) {
-            prizePortion = firstPrizePayout;
+            prizePortion = 50; // %
         } else if (_position == 2) {
-            prizePortion = secondPrizePayout;
+            prizePortion = 20; // %
         } else if (_position == 3) {
-            prizePortion = thirdPrizePayout;
+            prizePortion = 10; // %
         } else {
             return 0;
         }
