@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { ethers } from "ethers";
 import './App.css';
+import TicketPurchased from './TicketPurchased.js';
 import abi from './artifacts/contracts/CryptoLottery.sol/CryptoLottery.json';
 
 var TimeAgo = (function() {
@@ -69,6 +70,7 @@ export default function App() {
     const [winners, setWinners] = useState([]);
     const [prizePool, setPrizePool] = useState(0);
     const [purchasing, setPurchasing] = useState(false);
+    const [ticketPurchased, setTicketPurchased] = useState(false);
 
     const contractAddress = "0x05ed1b08eF2CcB5c6Eb867638cFA9FD73a09687e";
     const contractABI = abi.abi;
@@ -210,6 +212,7 @@ export default function App() {
             await ticket.wait();
 
             setPurchasing(false);
+            setTicketPurchased(true);
 
         } catch (error) {
             console.log(error);
@@ -258,47 +261,72 @@ export default function App() {
     }, []); // eslint-disable-line react-hooks/exhaustive-deps
   
     return (
-        <div className="mainContainer text-center">
+        <div className="content-center text-center">
 
-            <h1 className="mt-10 font-sans font-extrabold text-5xl text-white font-raleway">CryptoLottery</h1>
-            
-            <div className="ml-10 mr-10">
-                <p className="text-white font-sans text-lg pt-5">
-                    This project was built by <a href="https://twitter.com/mattlanham" className="text-indigo-200">@mattlanham</a> to learn more about web3 and in particular solidity smart contract programming. CryptoLottery allows people to purchase a ticket using ETH, when there are more than 10 tickets purchased the owner can start the draw. 
-                </p>
+            <div className="mt-16 mx-auto max-w-7xl px-4 sm:mt-20">
+                <h1 className="mx-auto text-4xl tracking-tight font-extrabold text-gray-900 sm:text-5xl md:text-6xl">Do you feel <span className="block text-indigo-600 xl:inline">lucky punk!?</span></h1>
+                <p className="mt-3 text-base text-gray-500 sm:text-lg">Enter now for your chance to win!</p>
+                {currentAccount && (
+                    <>
+                        <button className="hover:bg-gray-100 shadow-lg ring-1 ring-black ring-opacity-10 text-lg text-black p-5 pl-10 pr-10 rounded-lg mt-5" onClick={purchaseTicket} disabled={purchasing}>
+                            {!purchasing ? "Purchase a ticket" : "Awaiting confirmation"}
+                        </button>
+                        <p className="mt-5 text-gray-500">Current ticket price is: {ethers.utils.formatEther(ticketPrice)} ETH</p>
+
+                    </>
+                )}
             </div>
-
-            <div className="mt-10">
-                <hr className="border-2" />
-            </div>
-
             {currentAccount && (
-                <>
-                    <p className="text-white font-sans text-lg pt-5">The next draw currently has {tickets.length} tickets</p>
-                    <p className="text-white font-sans text-lg pt-5">The total prize pool is: {ethers.utils.formatEther(prizePool)} ETH</p>
-                </>
+                <div className="bg-indigo-800 rounded-xl mt-10">
+                    <div className="max-w-7xl mx-auto py-12 px-4 sm:py-16 sm:px-6 lg:px-8 lg:py-20">
+                        <div className="max-w-4xl mx-auto text-center">
+                            <h2 className="text-3xl font-extrabold text-white sm:text-4xl">
+                                The most transparent lottery you've every played!
+                            </h2>
+                            <p className="mt-3 text-xl text-indigo-200 sm:mt-4">
+                                All mechanics are driven by a smart contract using the latest web3 technology.
+                            </p>
+                        </div>
+                        <dl className="mt-10 text-center sm:max-w-3xl sm:mx-auto sm:grid sm:grid-cols-2 sm:gap-8">
+                            <div className="flex flex-col">
+                                <dt className="order-2 mt-2 text-lg leading-6 font-medium text-indigo-200">
+                                Prize Pool
+                                </dt>
+                                <dd className="order-1 text-5xl font-extrabold text-white">
+                                {ethers.utils.formatEther(prizePool)} ETH
+                                </dd>
+                            </div>
+                            <div className="flex flex-col mt-10 sm:mt-0">
+                                <dt className="order-2 mt-2 text-lg leading-6 font-medium text-indigo-200">
+                                Entrants
+                                </dt>
+                                <dd className="order-1 text-5xl font-extrabold text-white">
+                                    {tickets.length}
+                                </dd>
+                            </div>
+                        </dl>
+                    </div>
+                </div>
             )}
+
+           
 
             {!currentAccount && (
                 <>
-                    <button className="bg-white text-lg text-blue-900 p-5 pl-10 pr-10 rounded mt-10" onClick={connectWallet}>
+                    <button className="shadow text-lg text-blue-900 p-5 pl-10 pr-10 rounded mt-10" onClick={connectWallet}>
                         Connect your wallet
                     </button>
                     <p className="mt-5 text-white">Once your wallet is connected, you'll see the total entrants, prize pool and previous winners.</p>
                 </>
             )}
 
-            {currentAccount && (
+            {(currentAccount && true==false) && (
                 <>
-                    <button className="bg-white text-lg text-blue-900 p-5 pl-10 pr-10 rounded mt-10" onClick={purchaseTicket} disabled={purchasing}>
-                        {!purchasing ? "Purchase a ticket" : "Awaiting confirmation"}
-                    </button>
-                    <p className="mt-5 text-white">Current ticket price is: {ethers.utils.formatEther(ticketPrice)} ETH</p>
-
+                    
                     <div className="grid grid-cols-2 gap-4">
 
                         <div className="mt-10">
-                            <p className="text-white text-xl mb-5 font-bold">Entrants</p>
+                            <p className="text-xl mb-5 font-bold">Entrants</p>
                             {tickets.length === 0 && (
                                 <p className="mt-5 text-white">There are currently no entrants!</p>
                             )}
@@ -310,7 +338,7 @@ export default function App() {
                             })}
                         </div>
                         <div className="mt-10">
-                            <p className="text-white text-xl mb-5 font-bold">Previous winners</p>
+                            <p className="text-xl mb-5 font-bold">Previous winners</p>
                             {winners.length === 0 && (
                                 <p className="mt-5 text-white">There have been no winners</p>
                             )}
@@ -331,6 +359,11 @@ export default function App() {
                 </>
             )}
 
+            {ticketPurchased && (
+                <TicketPurchased onClick={
+                    setTicketPurchased
+                } />
+            )}
             
             
         </div>
