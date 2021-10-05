@@ -27,4 +27,6 @@ node_modules
 
 #Hardhat files
 cache
-artifacts
+src/artifacts/build-info
+src/artifacts/@openzeppelin
+src/artifacts/hardhat
