@@ -4,63 +4,7 @@ import './App.css';
 import TicketPurchased from './components/TicketPurchased.js';
 import IncorrectNetwork from './components/IncorrectNetwork.js';
 import abi from './artifacts/contracts/CryptoLottery.sol/CryptoLottery.json';
-
-var TimeAgo = (function() {
-    var self = {};
-    
-    // Public Methods
-    self.locales = {
-      prefix: '',
-      sufix:  'ago',
-      
-      seconds: 'less than a minute',
-      minute:  'about a minute',
-      minutes: '%d minutes',
-      hour:    'about an hour',
-      hours:   'about %d hours',
-      day:     'a day',
-      days:    '%d days',
-      month:   'about a month',
-      months:  '%d months',
-      year:    'about a year',
-      years:   '%d years'
-    };
-    
-    self.inWords = function(timeAgo) {
-      var seconds = Math.floor((new Date() - parseInt(timeAgo)) / 1000),
-          separator = this.locales.separator || ' ',
-          words = this.locales.prefix + separator,
-          interval = 0,
-          intervals = {
-            year:   seconds / 31536000,
-            month:  seconds / 2592000,
-            day:    seconds / 86400,
-            hour:   seconds / 3600,
-            minute: seconds / 60
-          };
-      
-      var distance = this.locales.seconds;
-      
-      for (var key in intervals) {
-        interval = Math.floor(intervals[key]);
-        
-        if (interval > 1) {
-          distance = this.locales[key + 's'];
-          break;
-        } else if (interval === 1) {
-          distance = this.locales[key];
-          break;
-        }
-      }
-      
-      distance = distance.replace(/%d/i, interval);
-      words += distance + separator + this.locales.sufix;
-  
-      return words.trim();
-    };
-    
-    return self;
-  }());
+import { TimeAgo } from './lib/helpers.js';
 
 export default function App() {
 
@@ -85,12 +29,18 @@ export default function App() {
         getPrizePool();
     };
 
+    const getContract = () => {
+        const { ethereum } = window;
+        const provider = new ethers.providers.Web3Provider(ethereum);
+        const signer = provider.getSigner();
+        const cryptoLotteryContract = new ethers.Contract(contractAddress, contractABI, signer);
+        
+        return [cryptoLotteryContract, signer, provider];
+    }
+
     const setupEvents = async () => {
         try {
-            const { ethereum } = window;
-            const provider = new ethers.providers.Web3Provider(ethereum);
-            const signer = provider.getSigner();
-            const cryptoLotteryContract = new ethers.Contract(contractAddress, contractABI, signer);
+            const [cryptoLotteryContract] = getContract();
 
             cryptoLotteryContract.on("TicketPurchased", (from, timestamp) => {
                 console.log("TicketPurchased", from, timestamp);
@@ -172,11 +122,7 @@ export default function App() {
 
     const getCurrentTicketPrice = async () => {
         try {
-            const { ethereum } = window;
-            const provider = new ethers.providers.Web3Provider(ethereum);
-            const signer = provider.getSigner();
-            const cryptoLotteryContract = new ethers.Contract(contractAddress, contractABI, signer);
-
+            const [cryptoLotteryContract] = getContract();
             const contractTicketPrice = await cryptoLotteryContract.getTicketPrice();
 
             setTicketPrice(contractTicketPrice);
@@ -190,12 +136,9 @@ export default function App() {
         console.log("called getTickets");
         
         try {
-            const { ethereum } = window;
-            const provider = new ethers.providers.Web3Provider(ethereum);
-            const signer = provider.getSigner();
-            const cryptoLotteryContract = new ethers.Contract(contractAddress, contractABI, signer);
-            const walletAddress = await signer.getAddress();
+            const [cryptoLotteryContract, signer] = getContract();
 
+            const walletAddress = await signer.getAddress();
             const contractTickets = await cryptoLotteryContract.getTickets();
 
             setTickets(contractTickets);
@@ -219,11 +162,7 @@ export default function App() {
 
     const getWinners = async () => {
         try {
-            const { ethereum } = window;
-            const provider = new ethers.providers.Web3Provider(ethereum);
-            const signer = provider.getSigner();
-            const cryptoLotteryContract = new ethers.Contract(contractAddress, contractABI, signer);
-
+            const [cryptoLotteryContract] = getContract();
             const contractWinners = await cryptoLotteryContract.getWinners();
 
             setWinners(contractWinners);
@@ -235,12 +174,10 @@ export default function App() {
 
     const purchaseTicket = async () => {
         try {
-            const { ethereum } = window;
-            const provider = new ethers.providers.Web3Provider(ethereum);
-            const signer = provider.getSigner();
-            const cryptoLotteryContract = new ethers.Contract(contractAddress, contractABI, signer);
+            const [cryptoLotteryContract] = getContract();
 
             setPurchasing(true);
+
             const ticket = await cryptoLotteryContract.purchaseTicket({value: ticketPrice});
             await ticket.wait();
 
@@ -255,10 +192,7 @@ export default function App() {
 
     const getPrizePool = async () => {
         try {
-            const { ethereum } = window;
-            const provider = new ethers.providers.Web3Provider(ethereum);
-            const signer = provider.getSigner();
-            const cryptoLotteryContract = new ethers.Contract(contractAddress, contractABI, signer);
+            const [cryptoLotteryContract] = getContract();
 
             const contractPrizePool = await cryptoLotteryContract.getPrizePool();
 
@@ -270,10 +204,7 @@ export default function App() {
 
     const startDraw = async () => {
         try {
-            const { ethereum } = window;
-            const provider = new ethers.providers.Web3Provider(ethereum);
-            const signer = provider.getSigner();
-            const cryptoLotteryContract = new ethers.Contract(contractAddress, contractABI, signer);
+            const [cryptoLotteryContract] = getContract();
 
             const draw = await cryptoLotteryContract.startDraw();
             await draw.wait();
@@ -285,10 +216,7 @@ export default function App() {
 
     const adminFunction = async (action) => {
         try {
-            const { ethereum } = window;
-            const provider = new ethers.providers.Web3Provider(ethereum);
-            const signer = provider.getSigner();
-            const cryptoLotteryContract = new ethers.Contract(contractAddress, contractABI, signer);
+            const [cryptoLotteryContract] = getContract();
 
             let actionTxn;
 
