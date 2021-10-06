@@ -126,7 +126,7 @@ export default function App() {
                 return;
             } else {
                 console.log("We have a ethereum object! ", ethereum);
-                setCurrentNetwork(ethereum.networkVersion);
+                setCurrentNetwork(parseInt(ethereum.networkVersion));
             }
 
             // Check if we are authorized to access the wallet
@@ -134,8 +134,8 @@ export default function App() {
 
             // detect Network account change
             ethereum.on('chainChanged', function(chainId){
-                console.log("Chain was updated", chainId);
-                setCurrentNetwork(chainId);
+                console.log("Chain was updated", parseInt(chainId));
+                setCurrentNetwork(parseInt(chainId));
             });
 
             if (accounts.length !== 0) {
@@ -477,7 +477,7 @@ export default function App() {
     
             <p className="text-gray-500 mt-10 mb-10">Built by <a href="https://twitter.com/mattlanham" className="text-indigo-800" target="_blank" rel="noreferrer">@mattlanham</a>  <span className="pl-5 pr-5">|</span>  View the sourcecode on <a href="https://github.com/mattlanham/crypto-lottery" target="_blank" rel="noreferrer" className="text-indigo-800"> Github</a></p>
             
-            {(currentNetwork != 4 && currentAccount) && (
+            {(currentNetwork !== 4 && currentAccount) && (
                 <IncorrectNetwork />
             )}
 
