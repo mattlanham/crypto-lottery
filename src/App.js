@@ -76,15 +76,18 @@ export default function App() {
                 return;
             } else {
                 console.log("We have a ethereum object! ", ethereum);
-                setCurrentNetwork(parseInt(ethereum.networkVersion));
             }
 
             // Check if we are authorized to access the wallet
             const accounts = await ethereum.request({ method: 'eth_accounts' });
 
+            console.log("setting the network to ", parseInt(ethereum.networkVersion));
+            setCurrentNetwork(parseInt(ethereum.networkVersion));
+
             // detect Network account change
             ethereum.on('chainChanged', function(chainId){
                 console.log("Chain was updated", parseInt(chainId));
+                console.log("setting the network to this ", parseInt(chainId));
                 setCurrentNetwork(parseInt(chainId));
             });
 
@@ -110,6 +113,8 @@ export default function App() {
                 alert("You need to install MetaMask to continue");
                 return;
             }
+
+            setCurrentNetwork(parseInt(ethereum.networkVersion));
 
             const accounts = await ethereum.request({ method: "eth_requestAccounts" });
 
