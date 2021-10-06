@@ -134,6 +134,7 @@ export default function App() {
 
             // detect Network account change
             ethereum.on('chainChanged', function(chainId){
+                console.log("Chain was updated", chainId);
                 setCurrentNetwork(chainId);
             });
 
