@@ -3,6 +3,7 @@ import { ethers } from "ethers";
 import './App.css';
 import TicketPurchased from './components/TicketPurchased.js';
 import IncorrectNetwork from './components/IncorrectNetwork.js';
+import AdminFunctions from './components/AdminFunctions.js';
 import abi from './artifacts/contracts/CryptoLottery.sol/CryptoLottery.json';
 import { TimeAgo } from './lib/helpers.js';
 
@@ -388,24 +389,9 @@ export default function App() {
             )}
 
             {currentAccount && currentAccount.toUpperCase() === '0x14f686aF5C1370268C2C77973ea2b37feaa45CCF'.toUpperCase() && (
-                <>
-                    <p className="mt-10">Admin functions:</p>
-                    <button className="hover:bg-gray-100 shadow-lg ring-1 ring-black ring-opacity-10 text-lg text-black p-3 pl-5 pr-5 rounded-lg mt-5" onClick={() => { adminFunction('startDraw') }}>
-                        Start Draw
-                    </button>
-                    
-                    <button  className="hover:bg-gray-100 shadow-lg ring-1 ring-black ring-opacity-10 text-lg text-black p-3 pl-5 pr-5 rounded-lg mt-5 ml-10" onClick={() => { adminFunction('withdrawBalance') }}>
-                        Withdraw contract balance
-                    </button>
-
-                    <button  className="hover:bg-gray-100 shadow-lg ring-1 ring-black ring-opacity-10 text-lg text-black p-3 pl-5 pr-5 rounded-lg mt-5 ml-10" onClick={() => { adminFunction('resetTickets') }}>
-                        Reset tickets
-                    </button>
-
-                    <button  className="hover:bg-gray-100 shadow-lg ring-1 ring-black ring-opacity-10 text-lg text-black p-3 pl-5 pr-5 rounded-lg mt-5 ml-10" onClick={() => { adminFunction('setTicketPrice') }}>
-                        Set ticket price
-                    </button>
-                </>
+                <AdminFunctions onClickCallback={
+                    adminFunction
+                } />
             )}
     
             <p className="text-gray-500 mt-10 mb-10">Built by <a href="https://twitter.com/mattlanham" className="text-indigo-800" target="_blank" rel="noreferrer">@mattlanham</a>  <span className="pl-5 pr-5">|</span>  View the sourcecode on <a href="https://github.com/mattlanham/crypto-lottery" target="_blank" rel="noreferrer" className="text-indigo-800"> Github</a></p>
