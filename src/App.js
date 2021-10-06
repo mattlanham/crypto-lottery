@@ -90,6 +90,7 @@ export default function App() {
                 console.log("Chain was updated", parseInt(chainId));
                 console.log("setting the network to this ", parseInt(chainId));
                 setCurrentNetwork(parseInt(chainId));
+                triggerInitialLoad();
             });
 
             if (accounts.length !== 0) {
