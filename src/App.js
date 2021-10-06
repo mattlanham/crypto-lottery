@@ -260,7 +260,7 @@ export default function App() {
     return (
         <div className="content-center text-center">
 
-            <div className="mt-16 mx-auto max-w-7xl px-4 sm:mt-20">
+            <div className="mt-16 mx-auto max-w-7xl px-4 sm:mt-10">
                 <h1 className="mx-auto text-4xl tracking-tight font-extrabold text-gray-900 sm:text-5xl md:text-6xl">Do you feel <span className="block text-indigo-600 xl:inline">lucky punk!?</span></h1>
                 <p className="mt-3 text-base text-gray-500 sm:text-lg">Enter now for your chance to win!</p>
                 {currentAccount && (
@@ -302,7 +302,7 @@ export default function App() {
             </div>
             {currentAccount && (
                 <div className="bg-indigo-600 rounded-xl mt-10">
-                    <div className="max-w-7xl mx-auto py-12 px-4 sm:py-16 sm:px-6 lg:px-8 lg:py-20">
+                    <div className="max-w-7xl mx-auto py-12 px-4 sm:py-16 sm:px-6 lg:px-8 lg:py-10">
                         <div className="max-w-4xl mx-auto text-center">
                             <h2 className="text-3xl font-extrabold text-white sm:text-4xl">
                                 The most transparent lottery you've every played!
